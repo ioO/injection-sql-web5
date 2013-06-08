@@ -1,13 +1,13 @@
 <!doctype html>
-<html lang="en">
+<html lang="fr">
 
 	<head>
 		<meta charset="utf-8">
 
-		<title>reveal.js - The HTML Presentation Framework</title>
+		<title>Injections SQL - 1=1 est plus que jamais True</title>
 
-		<meta name="description" content="A framework for easily creating beautiful presentations using HTML">
-		<meta name="author" content="Hakim El Hattab">
+		<meta name="description" content="Présentation sur les injections sql">
+		<meta name="author" content="Lionel Chanson">
 
 		<meta name="apple-mobile-web-app-capable" content="yes" />
 		<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
@@ -33,77 +33,59 @@
 	<body>
 
 		<div class="reveal">
-
-			<!-- Any section element inside of this container is displayed as a slide -->
-			<div class="slides">
+            <div class="slides">
+                <section>
+                    <h1>Injections SQL</h1>
+                    <h3>1=1 est plus que jamais True</h3>
+                </section>
+				<section>
+					<h2>Moi - @liochan</h2>
+                    <h4><small>( on va pas y passer la nuit )</small></h4>
+                    <p>
+                        Dans le web depuis plus de 10 ans. Je m'intéresse à la sécurité des applications web.
+					</p>
+				</section>
+                <section>
+                    <section>
+                        <h2>Constat</h2>
+                        <ul>
+                            <li>Les injections 1er au classement <a href="https://www.owasp.org/index.php/Category:OWASP_Top_Ten_Project">OWASP</a></li>
+                            <li><a href="https://github.com/search?p=100&q=extension%3Aphp+mysql_query+%24_GET&ref=searchresults&type=Code">
+                                Github Dorks</a> via <a href="https://twitter.com/Korben">@korben</a></li>
+                        </ul>
+                        <img src="image/github-dorks.jpg" />
+                    </section>
+                    <section>
+                        <p>OWASP : Open Web Application Security Project - <a href="https://www.owasp.org">www.owasp.org</a></p>
+                        <p><a href="http://www.exploit-db.com/google-dorks/">Google Dorks</a></p>
+                    </section>
+                </section>
 
 				<section>
-					<h1>Reveal.js</h1>
-					<h3>HTML Presentations Made Easy</h3>
-					<p>
-						<small>Created by <a href="http://hakim.se">Hakim El Hattab</a> / <a href="http://twitter.com/hakimel">@hakimel</a></small>
-					</p>
+                    <h2>Les raisons</h2>
+                    <ul style="list-style:none;line-height:1,5em;">
+                        <li>La sécurité est perçue comme secondaire</li>
+                        <li>Trop de confiance envers les outils</li>
+                    </ul>
+                </section>
+			
+				<section>
+					<h2>Programme</h2>
+                    <ol>
+                        <li class="fragment">Comment est menée une attaque</li>
+                        <li class="fragment">Contre mesure technique</li>
+                        <li class="fragment">Gérer la sécurité d'une application</li>
+                    </ol>
 				</section>
 
 				<section>
-					<h2>Heads Up</h2>
-					<p>
-						reveal.js is a framework for easily creating beautiful presentations using HTML. You'll need a browser with
-						support for CSS 3D transforms to see it in its full glory.
-					</p>
-
-					<aside class="notes">
-						Oh hey, these are some notes. They'll be hidden in your presentation, but you can see them if you open the speaker notes window (hit 's' on your keyboard).
-					</aside>
-				</section>
-
-				<!-- Example of nested vertical slides -->
-				<section>
-					<section>
-						<h2>Vertical Slides</h2>
-						<p>
-							Slides can be nested inside of other slides,
-							try pressing <a href="#" class="navigate-down">down</a>.
-						</p>
-						<a href="#" class="image navigate-down">
-							<img width="178" height="238" src="https://s3.amazonaws.com/hakim-static/reveal-js/arrow.png" alt="Down arrow">
-						</a>
-					</section>
-					<section>
-						<h2>Basement Level 1</h2>
-						<p>Press down or up to navigate.</p>
-					</section>
-					<section>
-						<h2>Basement Level 2</h2>
-						<p>Cornify</p>
-						<a class="test" href="http://cornify.com">
-							<img width="280" height="326" src="https://s3.amazonaws.com/hakim-static/reveal-js/cornify.gif" alt="Unicorn">
-						</a>
-					</section>
-					<section>
-						<h2>Basement Level 3</h2>
-						<p>That's it, time to go back up.</p>
-						<a href="#/2" class="image">
-							<img width="178" height="238" src="https://s3.amazonaws.com/hakim-static/reveal-js/arrow.png" alt="Up arrow" style="-webkit-transform: rotate(180deg);">
-						</a>
-					</section>
-				</section>
-
-				<section>
-					<h2>Slides</h2>
-					<p>
-						Not a coder? No problem. There's a fully-featured visual editor for authoring these, try it out at <a href="http://slid.es" target="_blank">http://slid.es</a>.
-					</p>
-				</section>
-
-				<section>
-					<h2>Point of View</h2>
-					<p>
-						Press <strong>ESC</strong> to enter the slide overview.
-					</p>
-					<p>
-						Hold down alt and click on any element to zoom in on it using <a href="http://lab.hakim.se/zoom-js">zoom.js</a>. Alt + click anywhere to zoom back out.
-					</p>
+					<h2>Données en entrée</h2>
+                    <ul>
+                        <li>GET</li>
+                        <li>POST</li>
+                        <li>Cookie</li>
+                        <li>HTTP Header</li>
+                    </ul>
 				</section>
 
 				<section>
