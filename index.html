@@ -39,7 +39,7 @@
                     <h3>1=1 est plus que jamais True</h3>
                 </section>
 				<section>
-					<h2>Moi - @liochan</h2>
+					<h2>Lionel Chanson</h2>
                     <h4><small>( on va pas y passer la nuit )</small></h4>
                     <p>
                         Dans le web depuis plus de 10 ans. Je m'intéresse à la sécurité des applications web.
@@ -92,7 +92,7 @@
 
                 <section>
                     <section>
-					<h2>Les outils de Pen Tests</h2>
+					<h2>Les outils de pentest</h2>
 					<ul>
 						<li>Metasploit</li>
 						<li>SqlNinja</li>
@@ -113,7 +113,7 @@
                     </section>
                     <section>
                         <a href="http://kali.org/">Kali Linux</a>
-                        <p>Distribution linux pour faire des Pen Tests (BackTrack)</p>
+                        <p>Distribution linux pour faire des pentest (BackTrack)</p>
                     </section>
 				</section>
 
@@ -125,7 +125,7 @@
     $ python sqlmap.py -u "http://localhost:8000/?id=1" -a
                             </code>
                         </pre>
-                        <p>La pire façon de faire un Pen Test !</p>
+                        <p>La pire façon de faire un pentest !</p>
     				</section>
                     <section>
                         <h2>Sqlmap fingerprinting</h2>
@@ -288,16 +288,16 @@
                 </section>
 
 				<section>
-					<h2>Data Validation / Input Sanitazation</h2>
+					<h2>Data Validation / Input Sanitization</h2>
 					<ul>
                         <li>A utiliser si les autres solutions sont impossibles</li>
                         <li>Important au niveau UX</li>
-                        <li>Efficace pour les XSS</li>
+                        <li>Efficace pour les attaques XSS</li>
                         <li>Problématique de whitelist / blacklist</li>
 					</ul>
                 </section>
                 <section>
-                    <h2>Data Validation / Input Sanitazation</h2>
+                    <h2>Data Validation / Input Sanitization</h2>
                     <p>C'est du code donc potentiellement vulnérable</p>
                     <pre>
                         <code class="php">
@@ -310,7 +310,7 @@
                     </pre>
 				</section>
                 <section>
-					<h2>Data Validation / Input Sanitazation</h2>
+					<h2>Data Validation / Input Sanitization</h2>
                     <pre>
                         <code class="php">
     //Enlève les espaces
@@ -331,7 +331,7 @@
                         <h2>IDS : Intrusion Detection System</h2>
                         <h6>( ou WAF : Web Application Firewall )</h6>
                             <p><a href="https://www.modsecurity.org/">Modsecurity</a> des vulnérabilités connues et 
-                                corrigées. <br />Mis à jour ?</p>
+                                corrigées. <br />Est-ce mis à jour ?</p>
                         </pre>
                         <pre>
                             <code data-trim class="sql">
@@ -380,7 +380,7 @@
                         <ul>
                             <li class="fragment">Essentiel sur une app from scratch</li>
                             <li class="fragment">Régression de sécurité</li>
-                            <li class="fragment">Pen Tests dans le système d'intégration continue </li>
+                            <li class="fragment">pentest dans le système d'intégration continue </li>
                         </ul>
                 </section>
                 <section>
@@ -398,7 +398,7 @@ def test_inject_id(self):
 					</code></pre>
 				</section>
                 <section>
-                    <p>Scripter vos Pen Tests</p>
+                    <p>Scripter vos pentest</p>
                     <pre><code data-trim class="python">
 def test_enum_database(self):
     """ Test sql injection which enum database """
@@ -418,7 +418,7 @@ def test_enum_database(self):
 				</section>
 
 				<section>
-                    <h2>Scriptez vos Pen Tests</h2>
+                    <h2>Scriptez vos pentest</h2>
                     <ul>
                         <li>Pour les rejouer plus facilement</li>
                         <li>Pour tester la production</li>
@@ -442,7 +442,7 @@ def test_enum_database(self):
 				</section>
                 <section>
                     <h2>Testez !</h2>
-                    <h3>Unit Test, Pen Test</h3>
+                    <h3>Unit Test, pentest</h3>
 				</section>
                 <section>
                     <section>
@@ -450,13 +450,55 @@ def test_enum_database(self):
                     </section>
                     <section>
                         <h2>Pour s'entrainer</h2>
+                        <ul>
+                            <li><a href="http://www.root-me.org/">root-me.org</a></li>
+                            <li><a href="https://www.pentesterlab.com/">pentesterlab.com</a></li>
+                            <li><a href="http://www.dvwa.co.uk/">Damn Vulnerable Wep App</a></li>
+                            <li><a href="http://www.offensive-security.com/metasploit-unleashed/Main_Page">
+                                Metasploit unleashed</a></li>
+                        </ul>
                     </section>
                     <section>
                         <h2>Liens</h2>
+                            <p>SQL Cheat Sheet : Michael Boman</p>
+                        <ul>
+                            <li><a href="http://www.michaelboman.org/books/sql-injection-cheat-sheet-db2">DB2</a></li>
+                            <li><a href="http://www.michaelboman.org/books/sql-injection-cheat-sheet-informix">Informix</a></li>
+                            <li><a href="http://www.michaelboman.org/books/sql-injection-cheat-sheet-ingres">Ingres</a></li>
+                            <li><a href="http://www.michaelboman.org/books/sql-injection-cheat-sheet-mysql">Mysql</a></li>
+                            <li><a href="http://www.michaelboman.org/books/sql-injection-cheat-sheet-mssql">Mssql</a></li>
+                            <li><a href="http://www.michaelboman.org/books/sql-injection-cheat-sheet-oracle">Oracle</a></li>
+                            <li><a href="http://www.michaelboman.org/books/sql-injection-cheat-sheet-postgresql">Postgres</a></li>
+                        </ul>
+                    </section>
+                    <section>
+                        <p>Ferruh Mavituna :<a href="http://ferruh.mavituna.com/sql-injection-cheatsheet-oku/">SQL Cheat Sheet</a>
+                        <p>Yasser Aboukir<a href="SQL Injection through HTTP Headers">SQL Injection through HTTP Headers</a></p>
+                        </p>
+                        <p>Johannes Dahse</p>
+                        <ul>
+                            <li><a href="http://websec.wordpress.com/2010/12/04/sqli-filter-evasion-cheat-sheet-mysql/">
+                                Sqli filter evasion</a></li>
+                            <li><a href="http://websec.files.wordpress.com/2010/11/sqli2.pdf">SQLi filter evasion and obfuscation</a></li>
+                            <li><a href="http://websec.wordpress.com/2010/03/19/exploiting-hard-filtered-sql-injections/">Exploiting Hard Filtered SQL Injections</a></li>
+                            <li><a href="http://websec.wordpress.com/2010/03/19/exploiting-hard-filtered-sql-injections-2-conditional-errors/">Exploiting Hard Filtered SQL Injections Part 2</a></li>
+                            <li><a href="http://websec.wordpress.com/2010/03/19/exploiting-hard-filtered-sql-injections-3/">Exploiting Hard Filtered SQL Injections Part 3</a></li>
+                        </ul>
+                    </section>
+                    <section>
+                        <h2>Owasp</h2>
+                        <ul>
+                            <li><a href="https://www.owasp.org/">OWASP</a></li>
+                            <li><a href="https://www.owasp.org/index.php/Category:OWASP_Top_Ten_Project">Top 10</a></li>
+                            <li><a href="https://www.owasp.org/index.php/Top_10_2013-A1-Injection">SQL Injection</a></li>
+                            <li><a href="https://www.owasp.org/index.php/Web_Application_Penetration_Testing">Web App Pentest Guide</a></li>
+                            <li><a href="https://www.owasp.org/index.php/Category:OWASP_Guide_Project">Development guide</a></li>
+
                     </section>
 				</section>
 				<section>
-					<h1>Questions ?</h1>
+                    <h1>Questions ?</h1>
+                    <a href="https://www.twitter.com/liochan">@liochan</a>
 				</section>
 
 			</div>
